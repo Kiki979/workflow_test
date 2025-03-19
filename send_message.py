@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-def send_push_notification(message, title="Testung", sound="magic"):
+def send_push_notification(message):
    
     token = os.getenv('TOKEN')
     user = os.getenv('USER')
@@ -14,10 +14,10 @@ def send_push_notification(message, title="Testung", sound="magic"):
     data = urllib.parse.urlencode({
         "token": token,
         "user": user,
-        "title": title,
+        "title": "Message Test",
         "message": message,
-        "priority": 1,
-        "sound": sound
+        "priority": '1',
+        "sound": "magic"
     })
     headers = {"Content-type": "application/x-www-form-urlencoded"}
 
@@ -38,4 +38,4 @@ def send_push_notification(message, title="Testung", sound="magic"):
         conn.close()
 
 if __name__ == "__main__":
-    send_push_notification("Login erfolgreich!")
+    send_push_notification("Send message erfolgreich!")
