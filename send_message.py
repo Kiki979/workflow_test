@@ -1,9 +1,9 @@
 import http.client
 import urllib
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
 def send_push_notification(message):
    
