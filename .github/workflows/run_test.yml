@@ -1,0 +1,21 @@
+name: Send Push Notification
+
+on:
+  schedule:
+    - cron: '45-59/5 15 * * 1-5'
+    - cron: '0-30/5 16 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  send-notification:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 🚀 Send Push Notification
+        env:
+          TOKEN: ${{ secrets.TOKEN }}
+          USER: ${{ secrets.USER }}
+        run: python send_message.py > notification_log.txt 2>&1 || cat notification_log.txt
