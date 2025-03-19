@@ -1,21 +1,31 @@
 import http.client
 import urllib
 import os
+from datetime import datetime
 # from dotenv import load_dotenv
 
 # load_dotenv()
 
 def send_push_notification(message):
+    """Sendet eine Push-Nachricht mit der aktuellen Zeit."""
    
     token = os.getenv('TOKEN')
     user = os.getenv('USER')
+
+    if not token or not user:
+        print("⚠️ TOKEN oder USER nicht gesetzt. Bitte überprüfe deine Umgebungsvariablen.")
+        return
+
+    # Aktuelle Zeit formatieren
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    full_message = f"{message}\n🕒 {current_time}"
 
     conn = http.client.HTTPSConnection("api.pushover.net", 443)
     data = urllib.parse.urlencode({
         "token": token,
         "user": user,
         "title": "Message Test",
-        "message": message,
+        "message": full_message,
         "priority": '1',
         "sound": "magic"
     })
