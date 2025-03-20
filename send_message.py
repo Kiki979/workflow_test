@@ -2,18 +2,17 @@ import http.client
 import urllib
 import os
 from datetime import datetime
-# from dotenv import load_dotenv
 
-# load_dotenv()
 
-def send_push_notification(message):
+def send_push_notification(message, priority='1'):
     """Sendet eine Push-Nachricht mit der aktuellen Zeit."""
-   
     token = os.getenv('TOKEN')
     user = os.getenv('USER')
 
     if not token or not user:
-        print("⚠️ TOKEN oder USER nicht gesetzt. Bitte überprüfe deine Umgebungsvariablen.")
+        error_message = "⚠️ TOKEN oder USER nicht gesetzt. Bitte überprüfe deine Umgebungsvariablen."
+        print(error_message)
+        send_error_notification(error_message)
         return
 
     # Aktuelle Zeit formatieren
@@ -24,9 +23,9 @@ def send_push_notification(message):
     data = urllib.parse.urlencode({
         "token": token,
         "user": user,
-        "title": "Message Test",
+        "title": "Push Notification",
         "message": full_message,
-        "priority": '1',
+        "priority": priority,
         "sound": "magic"
     })
     headers = {"Content-type": "application/x-www-form-urlencoded"}
@@ -34,18 +33,27 @@ def send_push_notification(message):
     try:
         conn.request("POST", "/1/messages.json", data, headers)
         response = conn.getresponse()
-
+        
         if response.status == 200:
             print("✅ Push-Nachricht erfolgreich gesendet!")
         else:
-            print(f"❌ Fehler beim Senden der Push-Nachricht: {response.status}")
-            print("Antwort:", response.read().decode())
-
+            error_message = f"❌ Fehler beim Senden der Push-Nachricht: {response.status}\nAntwort: {response.read().decode()}"
+            print(error_message)
+            send_error_notification(error_message)
+    
     except Exception as e:
-        print(f"⚠️ Ausnahmefehler beim Senden der Push-Nachricht: {e}")
-
+        error_message = f"⚠️ Ausnahmefehler beim Senden der Push-Nachricht: {e}"
+        print(error_message)
+        send_error_notification(error_message)
+    
     finally:
         conn.close()
 
+
+def send_error_notification(error_message):
+    """Sendet eine Push-Nachricht mit einer Fehlerbenachrichtigung."""
+    send_push_notification(f"🚨 Fehler: {error_message}", priority='2')
+
+
 if __name__ == "__main__":
-    send_push_notification("Send message erfolgreich!")
+    send_push_notification("Testnachricht gesendet!")
